@@ -1,0 +1,101 @@
+<section class="form-panel">
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="history-row">
+      <label>
+        <span>Wczytaj zapisaną kartę</span>
+        <select [value]="selectedCardId() ?? ''" (change)="selectSavedCard($any($event.target).value)">
+          <option value="">Nowa karta</option>
+          @for (card of savedCards(); track card.id) {
+            <option [value]="card.id">{{ savedCardLabel(card) }}</option>
+          }
+        </select>
+      </label>
+
+      <button class="clear-button" type="button" (click)="clearCard()">Wyczyść kartę</button>
+    </div>
+
+    <div class="form-grid">
+      <label>
+        <span>Data pierwszego losowania</span>
+        <input type="date" formControlName="firstDrawDate" />
+      </label>
+
+      <label>
+        <span>Liczba losowań</span>
+        <input type="number" min="1" step="1" formControlName="numberOfDrawings" />
+      </label>
+
+      <label>
+        <span>Typ losowania</span>
+        <select formControlName="drawType">
+          @for (type of drawTypes; track type.value) {
+            <option [value]="type.value">{{ type.label }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <div class="numbers-header">
+      <div>
+        <p class="section-label">Zestawy liczb</p>
+      </div>
+      <button class="icon-button add-button" type="button" aria-label="Dodaj zestaw liczb" (click)="addNumbers()">+</button>
+    </div>
+
+    <div class="tickets" formArrayName="numbers">
+      @for (ticket of numbers.controls; track ticket; let ticketIndex = $index) {
+        <fieldset class="ticket" [formGroupName]="ticketIndex">
+          <legend>Zestaw {{ ticketIndex + 1 }}</legend>
+
+          <div class="number-row" formArrayName="numbers">
+            @for (numberControl of numberControls(ticket).controls; track numberControl; let numberIndex = $index) {
+              <label class="number-field">
+                <span>{{ numberIndex + 1 }}</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="49"
+                  inputmode="numeric"
+                  [formControlName]="numberIndex"
+                  [attr.aria-label]="'Liczba ' + (numberIndex + 1) + ' w zestawie ' + (ticketIndex + 1)"
+                />
+              </label>
+            }
+          </div>
+
+          @if (numberControls(ticket).hasError('duplicatedNumbers') && numberControls(ticket).touched) {
+            <p class="field-error">Liczby w jednym zestawie nie mogą się powtarzać.</p>
+          }
+
+          <button
+            class="icon-button remove-button"
+            type="button"
+            aria-label="Usuń zestaw liczb"
+            [disabled]="!canRemoveNumbers()"
+            (click)="removeNumbers(ticketIndex)"
+          >
+            -
+          </button>
+        </fieldset>
+      }
+    </div>
+
+    <div class="actions">
+      <p class="status">{{ resultMessage() }}</p>
+      <button class="submit-button" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Wysyłanie...' : 'Sprawdź kupon' }}
+      </button>
+    </div>
+  </form>
+
+  @if (formattedResults().length > 0) {
+    <section class="results-panel" aria-label="Wyniki sprawdzenia">
+      <p class="section-label">Wyniki</p>
+      <div class="result-lines">
+        @for (result of formattedResults(); track result) {
+          <div [class]="getResultClass(result)">{{ result }}</div>
+        }
+      </div>
+    </section>
+  }
+</section>
