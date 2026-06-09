@@ -1,0 +1,24 @@
+<main class="auth-page">
+  <section class="auth-layout">
+    <div class="auth-copy">
+      <p class="eyebrow">Llama</p>
+      <h1>Witaj w Llama</h1>
+      <p class="lead">Zaloguj sie i ruszamy dalej.</p>
+
+      <button class="primary-action" type="button" (click)="login()">
+        <span>Zaloguj</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M13.25 5.25 19.5 11.5l-6.25 6.25-1.4-1.4 3.85-3.85H4.5v-2h11.2l-3.85-3.85 1.4-1.4Z" />
+        </svg>
+      </button>
+
+      @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+      }
+    </div>
+
+    <figure class="llama-visual">
+      <img ngSrc="/assets/llama-sunshine.png" alt="Lama wyrzewająca się na słoneczku" height="1536" width="1024"/>
+    </figure>
+  </section>
+</main>

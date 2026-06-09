@@ -1,0 +1,59 @@
+<main class="dashboard-shell" [class.dashboard-shell--collapsed]="!isMenuExpanded()">
+  <aside class="sidebar" aria-label="Menu glowne">
+    <div class="sidebar-header">
+      <a class="brand" routerLink="/dashboard/home" aria-label="Llama dashboard">
+        <span class="brand-mark">L</span>
+        @if (isMenuExpanded()) {
+          <span class="brand-text">Llama</span>
+        }
+      </a>
+
+      <button class="icon-button" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuExpanded()" aria-label="Przelacz menu">
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" />
+        </svg>
+      </button>
+    </div>
+
+    <nav class="menu">
+      @for (item of menuItems; track item.route) {
+        <a
+          class="menu-link"
+          [routerLink]="item.route"
+          routerLinkActive="menu-link--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [attr.title]="!isMenuExpanded() ? item.label : null"
+        >
+          <span class="menu-icon" aria-hidden="true">{{ item.label.charAt(0) }}</span>
+          @if (isMenuExpanded()) {
+            <span class="menu-label">{{ item.label }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      @if (isMenuExpanded()) {
+        <div class="user-summary">
+          <span class="user-label">Zalogowany</span>
+          <span class="user-name">{{ displayName() }}</span>
+        </div>
+      }
+
+      <button class="logout-button" type="button" (click)="logout()" [disabled]="isLoggingOut()">
+        <span class="menu-icon" aria-hidden="true">W</span>
+        @if (isMenuExpanded()) {
+          <span>{{ isLoggingOut() ? 'Wylogowywanie' : 'Wyloguj' }}</span>
+        }
+      </button>
+    </div>
+  </aside>
+
+  <section class="content-panel">
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+
+    <router-outlet />
+  </section>
+</main>

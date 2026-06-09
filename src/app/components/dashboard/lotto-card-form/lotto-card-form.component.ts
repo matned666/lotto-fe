@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Observable, finalize, of, switchMap } from 'rxjs';
-import { DrawType, LottoCard } from '../../model/lotto-card';
-import { CheckResult, LottoCheckService } from '../../services/lotto-check.service';
+import { DrawType, LottoCard } from '../../../model/lotto-card';
+import { CheckResult, LottoCheckService } from '../../../services/lotto-check.service';
 
 type LottoNumbersForm = FormGroup<{
   numbers: FormArray<FormControl<number | null>>;
