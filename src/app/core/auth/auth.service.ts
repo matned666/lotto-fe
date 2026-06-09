@@ -23,8 +23,12 @@ export class AuthService {
   readonly errorMessage = this.errorMessageState.asReadonly();
   readonly isAuthenticated = computed(() => this.statusState() === 'authenticated');
 
-  login(): void {
+  loginByGithub(): void {
     window.location.assign(`${this.appConfig.backendUrl}/oauth2/authorization/github`);
+  }
+
+  loginByGoogle(): void {
+    window.location.assign(`${this.appConfig.backendUrl}/oauth2/authorization/google`);
   }
 
   loadCurrentUser(): Observable<AuthenticatedUser | null> {
