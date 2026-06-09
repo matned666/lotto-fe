@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { Observable, finalize, of, switchMap } from 'rxjs';
+import { Observable, finalize, switchMap } from 'rxjs';
 import { DrawType, LottoCard } from '../../../model/lotto-card';
 import { CheckResult, LottoCheckService } from '../../../services/lotto-check.service';
 
@@ -26,14 +26,14 @@ export class LottoCardFormComponent implements OnInit {
     firstDrawDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     numberOfDrawings: new FormControl(1, {
       nonNullable: true,
-      validators: [Validators.required, Validators.min(1)]
+      validators: [Validators.required, Validators.min(1), Validators.max(20)]
     }),
     drawType: new FormControl<DrawType>(DrawType.LOTTO, {
       nonNullable: true,
       validators: [Validators.required]
     }),
     numbers: new FormArray<LottoNumbersForm>([this.createNumbersGroup()], {
-      validators: [Validators.required, Validators.minLength(1)]
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(10)]
     })
   });
 
@@ -52,6 +52,10 @@ export class LottoCardFormComponent implements OnInit {
   }
 
   protected addNumbers(): void {
+    if (this.numbers.length >= 10) {
+      return;
+    }
+
     this.numbers.push(this.createNumbersGroup());
   }
 
@@ -108,7 +112,7 @@ export class LottoCardFormComponent implements OnInit {
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.resultMessage.set('Uzupełnij wszystkie wymagane pola.');
+      this.resultMessage.set('Uzupelnij wszystkie wymagane pola.');
       return;
     }
 
@@ -125,10 +129,10 @@ export class LottoCardFormComponent implements OnInit {
     ).subscribe({
       next: (results) => {
         this.formattedResults.set(results.map((result) => this.formatResult(result)));
-        this.resultMessage.set(`Zapisano kartę. Liczba wyników: ${results.length}.`);
+        this.resultMessage.set(`Zapisano karte. Liczba wynikow: ${results.length}.`);
       },
       error: () => {
-        this.resultMessage.set('Nie udało się zapisać albo sprawdzić kuponu.');
+        this.resultMessage.set('Nie udalo sie zapisac albo sprawdzic kuponu.');
       }
     });
   }
@@ -143,16 +147,12 @@ export class LottoCardFormComponent implements OnInit {
         }
       },
       error: () => {
-        this.resultMessage.set('Nie udało się pobrać zapisanych kart.');
+        this.resultMessage.set('Nie udalo sie pobrac zapisanych kart.');
       }
     });
   }
 
   private saveCardIfNeeded(card: LottoCard): Observable<LottoCard> {
-    if (card.id) {
-      return of(card);
-    }
-
     return this.lottoCheckService.saveCard(card);
   }
 
@@ -168,7 +168,9 @@ export class LottoCardFormComponent implements OnInit {
         return [card, ...cards];
       }
 
-      return cards;
+      const updatedCards = [...cards];
+      updatedCards[existingIndex] = card;
+      return updatedCards;
     });
   }
 
@@ -227,18 +229,18 @@ export class LottoCardFormComponent implements OnInit {
 
   private replaceNumbers(groups: LottoNumbersForm[]): void {
     this.form.setControl('numbers', new FormArray<LottoNumbersForm>(groups, {
-      validators: [Validators.required, Validators.minLength(1)]
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(10)]
     }));
   }
 
   private formatResult(result: CheckResult): string {
     const matchingCount = result.matchingNumbers.length;
-    const drawName = result.lottoDrawDto.drawType === DrawType.LOTTO_PLUS ? 'PLUS' : 'GŁÓWNE LOSOWANIE';
+    const drawName = result.lottoDrawDto.drawType === DrawType.LOTTO_PLUS ? 'PLUS' : 'GLOWNE LOSOWANIE';
 
     return [
       `wynik:${matchingCount}`,
-      `pasujące liczby:=${this.formatNumbers(result.matchingNumbers)}`,
-      `zakład:${this.formatNumbers(result.lottoCardNumbersDto.numbers)}`,
+      `pasujace liczby:=${this.formatNumbers(result.matchingNumbers)}`,
+      `zaklad:${this.formatNumbers(result.lottoCardNumbersDto.numbers)}`,
       `numery z losowania:${this.formatNumbers(result.lottoDrawDto.numbers)}`,
       drawName,
       `data losowania:${result.lottoDrawDto.date} -> ${this.resultInfo(matchingCount)}`
@@ -256,26 +258,25 @@ export class LottoCardFormComponent implements OnInit {
       case 2:
         return 'Dwie trafione';
       case 3:
-        return 'Zawsze coś';
+        return 'Zawsze cos';
       case 4:
         return 'Cztery trafione';
       case 5:
-        return 'WOW, dużo kasy!';
+        return 'WOW, duzo kasy!';
       case 6:
         return 'WYGRANA!';
       default:
-        return 'Brak trafień';
+        return 'Brak trafien';
     }
   }
 
-  protected getResultClass(result: string) : string{
-    if (result.includes('wynik:6')) return "wygrana6";
-    if (result.includes('wynik:5')) return "wygrana5";
-    if (result.includes('wynik:4')) return "wygrana4";
-    if (result.includes('wynik:3')) return "wygrana3";
-    if (result.includes('wynik:2')) return "brak-wygranej2";
-    if (result.includes('wynik:1')) return "brak-wygranej1";
-    return "brak-wygranej0"
+  protected getResultClass(result: string): string {
+    if (result.includes('wynik:6')) return 'wygrana6';
+    if (result.includes('wynik:5')) return 'wygrana5';
+    if (result.includes('wynik:4')) return 'wygrana4';
+    if (result.includes('wynik:3')) return 'wygrana3';
+    if (result.includes('wynik:2')) return 'brak-wygranej2';
+    if (result.includes('wynik:1')) return 'brak-wygranej1';
+    return 'brak-wygranej0';
   }
 }
-

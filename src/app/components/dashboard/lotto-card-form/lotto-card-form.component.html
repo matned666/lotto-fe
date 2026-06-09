@@ -2,7 +2,7 @@
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <div class="history-row">
       <label>
-        <span>Wczytaj zapisaną kartę</span>
+        <span>Wczytaj zapisana karte</span>
         <select [value]="selectedCardId() ?? ''" (change)="selectSavedCard($any($event.target).value)">
           <option value="">Nowa karta</option>
           @for (card of savedCards(); track card.id) {
@@ -11,7 +11,7 @@
         </select>
       </label>
 
-      <button class="clear-button" type="button" (click)="clearCard()">Wyczyść kartę</button>
+      <button class="clear-button" type="button" (click)="clearCard()">Wyczysc karte</button>
     </div>
 
     <div class="form-grid">
@@ -21,8 +21,8 @@
       </label>
 
       <label>
-        <span>Liczba losowań</span>
-        <input type="number" min="1" step="1" formControlName="numberOfDrawings" />
+        <span>Liczba losowan</span>
+        <input type="number" min="1" max="20" step="1" formControlName="numberOfDrawings" />
       </label>
 
       <label>
@@ -64,13 +64,13 @@
           </div>
 
           @if (numberControls(ticket).hasError('duplicatedNumbers') && numberControls(ticket).touched) {
-            <p class="field-error">Liczby w jednym zestawie nie mogą się powtarzać.</p>
+            <p class="field-error">Liczby w jednym zestawie nie moga sie powtarzac.</p>
           }
 
           <button
             class="icon-button remove-button"
             type="button"
-            aria-label="Usuń zestaw liczb"
+            aria-label="Usun zestaw liczb"
             [disabled]="!canRemoveNumbers()"
             (click)="removeNumbers(ticketIndex)"
           >
@@ -83,7 +83,7 @@
     <div class="actions">
       <p class="status">{{ resultMessage() }}</p>
       <button class="submit-button" type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'Wysyłanie...' : 'Sprawdź kupon' }}
+        {{ isSubmitting() ? 'Wysylanie...' : 'Sprawdz kupon' }}
       </button>
     </div>
   </form>
