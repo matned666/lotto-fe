@@ -2,14 +2,17 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of, switchMap, tap, throwError } from 'rxjs';
 
+import { AppConfigService } from '../config/app-config.service';
 import { AuthenticatedUser, AuthStatus, CsrfTokenResponse } from './auth.models';
+import { CsrfTokenService } from './csrf-token.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly backendUrl = 'http://localhost:8080';
+  private readonly appConfig = inject(AppConfigService);
+  private readonly csrfTokenService = inject(CsrfTokenService);
 
   private readonly statusState = signal<AuthStatus>('unknown');
   private readonly userState = signal<AuthenticatedUser | null>(null);
@@ -21,14 +24,14 @@ export class AuthService {
   readonly isAuthenticated = computed(() => this.statusState() === 'authenticated');
 
   login(): void {
-    window.location.assign(`${this.backendUrl}/oauth2/authorization/github`);
+    window.location.assign(`${this.appConfig.backendUrl}/oauth2/authorization/github`);
   }
 
   loadCurrentUser(): Observable<AuthenticatedUser | null> {
     this.statusState.set('checking');
     this.errorMessageState.set(null);
 
-    return this.http.get<AuthenticatedUser>(`${this.backendUrl}/api/auth/me`).pipe(
+    return this.http.get<AuthenticatedUser>(`${this.appConfig.backendUrl}/api/auth/me`).pipe(
       switchMap((user) => this.loadCsrfToken().pipe(
         map(() => user),
         catchError(() => of(user)),
@@ -39,6 +42,7 @@ export class AuthService {
       }),
       catchError((error: HttpErrorResponse) => {
         this.userState.set(null);
+        this.csrfTokenService.clear();
         this.statusState.set('anonymous');
         this.errorMessageState.set(error.status === 0 ? 'Backend jest chwilowo niedostepny.' : null);
         return of(null);
@@ -60,13 +64,15 @@ export class AuthService {
   }
 
   private loadCsrfToken(): Observable<CsrfTokenResponse> {
-    return this.http.get<CsrfTokenResponse>(`${this.backendUrl}/api/auth/csrf`);
+    return this.http.get<CsrfTokenResponse>(`${this.appConfig.backendUrl}/api/auth/csrf`).pipe(
+      tap((csrfToken) => this.csrfTokenService.setToken(csrfToken.token)),
+    );
   }
 
   private submitLogoutForm(csrfToken: CsrfTokenResponse): void {
     const form = document.createElement('form');
     form.method = 'post';
-    form.action = `${this.backendUrl}/api/auth/logout`;
+    form.action = `${this.appConfig.backendUrl}/api/auth/logout`;
     form.style.display = 'none';
 
     const tokenInput = document.createElement('input');
