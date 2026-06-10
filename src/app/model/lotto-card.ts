@@ -1,9 +1,9 @@
 export interface LottoCard {
-   id?: number;
-   firstDrawDate: string;
-   numberOfDrawings: number;
-   numbers: LottoCardNumbers[];
-   drawType: DrawType;
+  id?: number;
+  firstDrawDate: string;
+  numberOfDraws: number;
+  numbers: LottoCardNumbers[];
+  drawType: DrawType;
 }
 
 export interface LottoCardNumbers {

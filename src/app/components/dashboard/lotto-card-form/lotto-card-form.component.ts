@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Observable, finalize, switchMap } from 'rxjs';
 import { DrawType, LottoCard } from '../../../model/lotto-card';
-import { CheckResult, LottoCheckService } from '../../../services/lotto-check.service';
+import { CheckResult, LottoCheckPayload, LottoCheckService } from '../../../services/lotto-check.service';
 
 type LottoNumbersForm = FormGroup<{
   numbers: FormArray<FormControl<number | null>>;
@@ -24,7 +24,7 @@ export class LottoCardFormComponent implements OnInit {
 
   protected readonly form = new FormGroup({
     firstDrawDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    numberOfDrawings: new FormControl(1, {
+    numberOfDraws: new FormControl(1, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1), Validators.max(20)]
     }),
@@ -86,7 +86,7 @@ export class LottoCardFormComponent implements OnInit {
   protected clearCard(): void {
     this.form.reset({
       firstDrawDate: '',
-      numberOfDrawings: 1,
+      numberOfDraws: 1,
       drawType: DrawType.LOTTO
     });
     this.replaceNumbers([this.createNumbersGroup()]);
@@ -99,7 +99,7 @@ export class LottoCardFormComponent implements OnInit {
     const drawType = card.drawType === DrawType.LOTTO_PLUS ? 'Lotto Plus' : 'Lotto';
     const firstNumbers = card.numbers[0]?.numbers?.join(', ') ?? 'brak liczb';
 
-    return `${card.firstDrawDate}, ${drawType}, ${card.numberOfDrawings} los., ${firstNumbers}`;
+    return `${card.firstDrawDate}, ${drawType}, ${card.numberOfDraws} los., ${firstNumbers}`;
   }
 
   protected numberControls(group: LottoNumbersForm): FormArray<FormControl<number | null>> {
@@ -174,9 +174,13 @@ export class LottoCardFormComponent implements OnInit {
     });
   }
 
-  private toCheckPayload(card: LottoCard): LottoCard {
-    const { id, ...payload } = card;
-    return payload;
+  private toCheckPayload(card: LottoCard): LottoCheckPayload {
+    return {
+      firstDrawDate: card.firstDrawDate,
+      numberOfDraws: card.numberOfDraws,
+      numbers: card.numbers,
+      drawType: card.drawType
+    };
   }
 
   private createNumbersGroup(numbers: number[] = []): LottoNumbersForm {
@@ -207,18 +211,18 @@ export class LottoCardFormComponent implements OnInit {
     return {
       id: this.selectedCardId() ?? undefined,
       firstDrawDate: rawValue.firstDrawDate,
-      numberOfDrawings: rawValue.numberOfDrawings,
+      numberOfDraws: rawValue.numberOfDraws,
       drawType: rawValue.drawType,
       numbers: rawValue.numbers.map((group) => ({
-        numbers: group.numbers.map((value) => Number(value))
-      }))
+        numbers: group.numbers.map((value) => Number(value)),
+      })),
     };
   }
 
   private fillForm(card: LottoCard): void {
     this.form.patchValue({
       firstDrawDate: card.firstDrawDate,
-      numberOfDrawings: card.numberOfDrawings,
+      numberOfDraws: card.numberOfDraws,
       drawType: card.drawType
     });
     this.replaceNumbers(card.numbers.map((group) => this.createNumbersGroup(group.numbers)));

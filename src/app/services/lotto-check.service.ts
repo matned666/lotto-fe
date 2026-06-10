@@ -4,6 +4,15 @@ import { Observable } from 'rxjs';
 import { AppConfigService } from '../core/config/app-config.service';
 import { DrawType, LottoCard } from '../model/lotto-card';
 
+export interface LottoCheckPayload {
+  firstDrawDate: string;
+  numberOfDraws: number;
+  numbers: {
+    numbers: number[];
+  }[];
+  drawType: DrawType;
+}
+
 export interface CheckResult {
   lottoCardNumbersDto: {
     numbers: number[];
@@ -22,7 +31,7 @@ export class LottoCheckService {
   private readonly http = inject(HttpClient);
   private readonly appConfig = inject(AppConfigService);
 
-  check(card: LottoCard): Observable<CheckResult[]> {
+  check(card: LottoCheckPayload): Observable<CheckResult[]> {
     return this.http.post<CheckResult[]>(`${this.appConfig.backendUrl}/check`, card);
   }
 
