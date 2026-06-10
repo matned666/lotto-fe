@@ -8,6 +8,20 @@ type LottoNumbersForm = FormGroup<{
   numbers: FormArray<FormControl<number | null>>;
 }>;
 
+interface FormattedCheckResult {
+  className: string;
+  drawDate: string;
+  drawName: string;
+  matchingCount: number;
+  cardNumbers: LottoNumberDisplay[];
+  drawNumbers: LottoNumberDisplay[];
+}
+
+interface LottoNumberDisplay {
+  value: number;
+  isMatching: boolean;
+}
+
 @Component({
   selector: 'app-lotto-card-form',
   imports: [ReactiveFormsModule],
@@ -41,7 +55,9 @@ export class LottoCardFormComponent implements OnInit {
   protected readonly savedCards = signal<LottoCard[]>([]);
   protected readonly selectedCardId = signal<number | null>(null);
   protected readonly resultMessage = signal('');
-  protected readonly formattedResults = signal<string[]>([]);
+  protected readonly formattedResults = signal<FormattedCheckResult[]>([]);
+  protected readonly isResultsPopupOpen = signal(false);
+  protected readonly winningResultsCount = signal(0);
 
   ngOnInit(): void {
     this.loadSavedCards(true);
@@ -93,6 +109,8 @@ export class LottoCardFormComponent implements OnInit {
     this.selectedCardId.set(null);
     this.resultMessage.set('');
     this.formattedResults.set([]);
+    this.isResultsPopupOpen.set(false);
+    this.winningResultsCount.set(0);
   }
 
   protected savedCardLabel(card: LottoCard): string {
@@ -109,6 +127,8 @@ export class LottoCardFormComponent implements OnInit {
   protected submit(): void {
     this.resultMessage.set('');
     this.formattedResults.set([]);
+    this.isResultsPopupOpen.set(false);
+    this.winningResultsCount.set(0);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -128,7 +148,10 @@ export class LottoCardFormComponent implements OnInit {
       finalize(() => this.isSubmitting.set(false))
     ).subscribe({
       next: (results) => {
-        this.formattedResults.set(results.map((result) => this.formatResult(result)));
+        const formattedResults = this.sortResultsByDate(results).map((result) => this.toFormattedResult(result));
+        this.formattedResults.set(formattedResults);
+        this.winningResultsCount.set(formattedResults.filter((result) => result.matchingCount >= 3).length);
+        this.isResultsPopupOpen.set(results.length > 0);
         this.resultMessage.set(`Zapisano karte. Liczba wynikow: ${results.length}.`);
       },
       error: () => {
@@ -229,6 +252,8 @@ export class LottoCardFormComponent implements OnInit {
     this.selectedCardId.set(card.id ?? null);
     this.resultMessage.set('');
     this.formattedResults.set([]);
+    this.isResultsPopupOpen.set(false);
+    this.winningResultsCount.set(0);
   }
 
   private replaceNumbers(groups: LottoNumbersForm[]): void {
@@ -237,22 +262,36 @@ export class LottoCardFormComponent implements OnInit {
     }));
   }
 
-  private formatResult(result: CheckResult): string {
+  private sortResultsByDate(results: CheckResult[]): CheckResult[] {
+    return [...results].sort((first, second) => this.dateTime(second.lottoDrawDto.date) - this.dateTime(first.lottoDrawDto.date));
+  }
+
+  private dateTime(date: string): number {
+    const time = new Date(date).getTime();
+    return Number.isNaN(time) ? 0 : time;
+  }
+
+  private toFormattedResult(result: CheckResult): FormattedCheckResult {
     const matchingCount = result.matchingNumbers.length;
     const drawName = result.lottoDrawDto.drawType === DrawType.LOTTO_PLUS ? 'PLUS' : 'GLOWNE LOSOWANIE';
 
-    return [
-      `wynik:${matchingCount}`,
-      `pasujace liczby:=${this.formatNumbers(result.matchingNumbers)}`,
-      `zaklad:${this.formatNumbers(result.lottoCardNumbersDto.numbers)}`,
-      `numery z losowania:${this.formatNumbers(result.lottoDrawDto.numbers)}`,
+    return {
+      className: this.resultClassByMatchingCount(matchingCount),
+      drawDate: result.lottoDrawDto.date,
       drawName,
-      `data losowania:${result.lottoDrawDto.date} -> ${this.resultInfo(matchingCount)}`
-    ].join(', ');
+      matchingCount,
+      cardNumbers: this.toNumberDisplay(result.lottoCardNumbersDto.numbers, result.matchingNumbers),
+      drawNumbers: this.toNumberDisplay(result.lottoDrawDto.numbers, result.matchingNumbers)
+    };
   }
 
-  private formatNumbers(numbers: number[]): string {
-    return `[${numbers.join(', ')}]`;
+  private toNumberDisplay(numbers: number[], matchingNumbers: number[]): LottoNumberDisplay[] {
+    const matchingSet = new Set(matchingNumbers);
+
+    return numbers.map((value) => ({
+      value,
+      isMatching: matchingSet.has(value)
+    }));
   }
 
   private resultInfo(matchingCount: number): string {
@@ -274,13 +313,25 @@ export class LottoCardFormComponent implements OnInit {
     }
   }
 
-  protected getResultClass(result: string): string {
-    if (result.includes('wynik:6')) return 'wygrana6';
-    if (result.includes('wynik:5')) return 'wygrana5';
-    if (result.includes('wynik:4')) return 'wygrana4';
-    if (result.includes('wynik:3')) return 'wygrana3';
-    if (result.includes('wynik:2')) return 'brak-wygranej2';
-    if (result.includes('wynik:1')) return 'brak-wygranej1';
+  protected closeResultsPopup(): void {
+    this.isResultsPopupOpen.set(false);
+  }
+
+  protected openResultsPopup(): void {
+    if (this.formattedResults().length === 0) {
+      return;
+    }
+
+    this.isResultsPopupOpen.set(true);
+  }
+
+  private resultClassByMatchingCount(matchingCount: number): string {
+    if (matchingCount === 6) return 'wygrana6';
+    if (matchingCount === 5) return 'wygrana5';
+    if (matchingCount === 4) return 'wygrana4';
+    if (matchingCount === 3) return 'wygrana3';
+    if (matchingCount === 2) return 'brak-wygranej2';
+    if (matchingCount === 1) return 'brak-wygranej1';
     return 'brak-wygranej0';
   }
 }

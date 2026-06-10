@@ -82,20 +82,66 @@
 
     <div class="actions">
       <p class="status">{{ resultMessage() }}</p>
+      @if (formattedResults().length > 0) {
+        <button class="clear-button" type="button" (click)="openResultsPopup()">Pokaz wyniki</button>
+      }
       <button class="submit-button" type="submit" [disabled]="isSubmitting()">
         {{ isSubmitting() ? 'Wysylanie...' : 'Sprawdz kupon' }}
       </button>
     </div>
   </form>
 
-  @if (formattedResults().length > 0) {
-    <section class="results-panel" aria-label="Wyniki sprawdzenia">
-      <p class="section-label">Wyniki</p>
-      <div class="result-lines">
-        @for (result of formattedResults(); track result) {
-          <div [class]="getResultClass(result)">{{ result }}</div>
-        }
-      </div>
-    </section>
+  @if (isResultsPopupOpen() && formattedResults().length > 0) {
+    <div class="results-backdrop" role="presentation" (click)="closeResultsPopup()">
+      <section
+        class="results-popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="results-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="results-popup-header">
+          <div>
+            <p class="section-label">Wyniki</p>
+            <h2 id="results-title">Wyniki sprawdzenia</h2>
+            <p class="wins-summary">Wygrane: {{ winningResultsCount() }}</p>
+          </div>
+          <button class="icon-button close-button" type="button" aria-label="Zamknij wyniki" (click)="closeResultsPopup()">x</button>
+        </header>
+
+        <div class="results-table-wrap">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Wynik</th>
+                <th>Data</th>
+                <th>Zaklad</th>
+                <th>Numery z losowania</th>
+                <th>Typ</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (result of formattedResults(); track $index) {
+                <tr [class]="result.className">
+                  <td class="score-cell">{{ result.matchingCount }}</td>
+                  <td><time [attr.datetime]="result.drawDate">{{ result.drawDate }}</time></td>
+                  <td>
+                    @for (number of result.cardNumbers; track $index) {
+                      <span [class.matching-number]="number.isMatching">{{ number.value }}</span>@if (!$last) {, }
+                    }
+                  </td>
+                  <td>
+                    @for (number of result.drawNumbers; track $index) {
+                      <span [class.matching-number]="number.isMatching">{{ number.value }}</span>@if (!$last) {, }
+                    }
+                  </td>
+                  <td>{{ result.drawName }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
   }
 </section>
