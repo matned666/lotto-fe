@@ -8,8 +8,8 @@ export class MenuService {
 
     readonly menuItems: DashboardMenuItem[] = [
         {
-            label: 'Start',
-            route: 'home',
+            label: 'Sprawdź dużego lotka',
+            route: 'lotto',
         },
     ];
 }

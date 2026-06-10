@@ -21,10 +21,10 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'home',
+        redirectTo: 'lotto',
       },
       {
-        path: 'home',
+        path: 'lotto',
         title: 'Dashboard',
         loadComponent: () => import('./components/dashboard/dashboard-home/dashboard-home.component').then((m) => m.DashboardHomeComponent),
       },
