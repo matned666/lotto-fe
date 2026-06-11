@@ -3,6 +3,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule
 import { Observable, finalize, switchMap } from 'rxjs';
 import { DrawType, LottoCard } from '../../../model/lotto-card';
 import { CheckResult, LottoCheckPayload, LottoCheckService } from '../../../services/lotto-check.service';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 
 type LottoNumbersForm = FormGroup<{
   numbers: FormArray<FormControl<number | null>>;
@@ -24,12 +25,13 @@ interface LottoNumberDisplay {
 
 @Component({
   selector: 'app-lotto-card-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './lotto-card-form.component.html',
   styleUrl: './lotto-card-form.component.css'
 })
 export class LottoCardFormComponent implements OnInit {
   private readonly lottoCheckService = inject(LottoCheckService);
+  private readonly translate = inject(TranslateService);
 
   protected readonly drawTypes = [
     { value: DrawType.LOTTO, label: 'Lotto' },
@@ -115,7 +117,7 @@ export class LottoCardFormComponent implements OnInit {
 
   protected savedCardLabel(card: LottoCard): string {
     const drawType = card.drawType === DrawType.LOTTO_PLUS ? 'Lotto Plus' : 'Lotto';
-    const firstNumbers = card.numbers[0]?.numbers?.join(', ') ?? 'brak liczb';
+    const firstNumbers = card.numbers[0]?.numbers?.join(', ') ?? this.translate.instant('FORM.INFO.NO_NUMBERS');
 
     return `${card.firstDrawDate}, ${drawType}, ${card.numberOfDraws} los., ${firstNumbers}`;
   }
@@ -152,16 +154,16 @@ export class LottoCardFormComponent implements OnInit {
         this.formattedResults.set(formattedResults);
         this.winningResultsCount.set(formattedResults.filter((result) => result.matchingCount >= 3).length);
         this.isResultsPopupOpen.set(results.length > 0);
-        this.resultMessage.set(`Zapisano karte. Liczba wynikow: ${results.length}.`);
+        this.resultMessage.set(this.translate.instant('FORM.INFO.CARD_SAVED', { resultsLength: results.length } ));
       },
       error: err => {
         if (err.status === 429) {
           this.resultMessage.set(
-            'Przekroczono limit zapytań. Spróbuj ponownie za chwilę.'
+            this.translate.instant('ERRORS.TOO_MANY_REQUESTS')
           );
           return;
         }
-        this.resultMessage.set('Nie udalo sie zapisac albo sprawdzic kuponu.');
+        this.resultMessage.set(this.translate.instant('ERRORS.COULDNT_LOAD_CARDS'));
       }
     });
   }
@@ -176,7 +178,7 @@ export class LottoCardFormComponent implements OnInit {
         }
       },
       error: () => {
-        this.resultMessage.set('Nie udalo sie pobrac zapisanych kart.');
+        this.resultMessage.set(this.translate.instant('ERRORS.COULDNT_LOAD_CARDS'));
       }
     });
   }
@@ -279,7 +281,7 @@ export class LottoCardFormComponent implements OnInit {
 
   private toFormattedResult(result: CheckResult): FormattedCheckResult {
     const matchingCount = result.matchingNumbers.length;
-    const drawName = result.lottoDrawDto.drawType === DrawType.LOTTO_PLUS ? 'PLUS' : 'GLOWNE LOSOWANIE';
+    const drawName = result.lottoDrawDto.drawType === DrawType.LOTTO_PLUS ? 'LOTTO PLUS' : 'LOTTO';
 
     return {
       className: this.resultClassByMatchingCount(matchingCount),
@@ -298,25 +300,6 @@ export class LottoCardFormComponent implements OnInit {
       value,
       isMatching: matchingSet.has(value)
     }));
-  }
-
-  private resultInfo(matchingCount: number): string {
-    switch (matchingCount) {
-      case 1:
-        return 'Jedna trafiona';
-      case 2:
-        return 'Dwie trafione';
-      case 3:
-        return 'Zawsze cos';
-      case 4:
-        return 'Cztery trafione';
-      case 5:
-        return 'WOW, duzo kasy!';
-      case 6:
-        return 'WYGRANA!';
-      default:
-        return 'Brak trafien';
-    }
   }
 
   protected closeResultsPopup(): void {
@@ -344,33 +327,33 @@ export class LottoCardFormComponent implements OnInit {
   private getValidationMessage(): string {
     let errorMessages: string[] = [];
     if (this.form.controls.firstDrawDate.hasError('required')) {
-      errorMessages.push('Wybierz datę pierwszego losowania.');
+      errorMessages.push(this.translate.instant('ERRORS.REQUIRED_DATE'));
     }
 
     if (this.form.controls.numberOfDraws.hasError('required')) {
-      errorMessages.push('Podaj liczbę losowań.');
+      errorMessages.push(this.translate.instant('ERRORS.INVALID_DRAWS_COUNT'));
     }
 
     if (this.form.controls.numberOfDraws.hasError('min')) {
-      errorMessages.push('Minimalna liczba losowań to 1.');
+      errorMessages.push(this.translate.instant('ERRORS.INVALID_DRAWS_COUNT_MIN'));
     }
 
     if (this.form.controls.numberOfDraws.hasError('max')) {
-      errorMessages.push('Maksymalna liczba losowań to 10.');
+      errorMessages.push(this.translate.instant('ERRORS.INVALID_DRAWS_COUNT_MAX'));
     }
 
     if (this.form.controls.drawType.hasError('required')) {
-      errorMessages.push('Wybierz typ losowania.');
+      errorMessages.push(this.translate.instant('ERRORS.REQUIRED_TYPE'));
     }
 
     const numbers = this.form.controls.numbers;
 
     if (numbers.hasError('minlength')) {
-      errorMessages.push('Dodaj przynajmniej jeden zakład.');
+      errorMessages.push(this.translate.instant('ERRORS.REQUIRED_AT_LEAST_1_DRAW'));
     }
 
     if (numbers.hasError('maxlength')) {
-      errorMessages.push('Możesz dodać maksymalnie 10 zakładów.');
+      errorMessages.push(this.translate.instant('ERRORS.REQUIRED_MAX_10_DRAWS'));
     }
 
     let hasRequiredError = false;
@@ -396,15 +379,15 @@ export class LottoCardFormComponent implements OnInit {
     });
 
     if (hasRequiredError) {
-      errorMessages.push('Wszystkie liczby muszą być uzupełnione.');
+      errorMessages.push(this.translate.instant('ERRORS.NUMBERS_REQUIRED'));
     }
 
     if (hasRangeError) {
-      errorMessages.push('Liczby muszą być z zakresu 1-49.');
+      errorMessages.push(this.translate.instant('ERRORS.NUMBERS_RANGE'));
     }
 
     if (hasUniqueError) {
-      errorMessages.push('Liczby w jednym zakładzie nie mogą się powtarzać.');
+      errorMessages.push(this.translate.instant('ERRORS.DUPLICATED_NUMBERS'));
     }
 
     return errorMessages.join(' ');

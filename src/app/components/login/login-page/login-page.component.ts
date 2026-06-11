@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import {NgOptimizedImage} from "@angular/common";
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
     selector: 'app-login-page',
@@ -9,6 +10,7 @@ import {NgOptimizedImage} from "@angular/common";
     styleUrl: '../../../shared/auth-page.css',
   imports: [
     NgOptimizedImage,
+    TranslatePipe,
 
   ]
 })

@@ -1,5 +1,5 @@
 <main class="dashboard-shell" [class.dashboard-shell--collapsed]="!isMenuExpanded()">
-  <aside class="sidebar" aria-label="Menu glowne">
+  <aside class="sidebar" [aria-label]="( 'MAIN_MENU' | translate )">
     <div class="sidebar-header">
       <a class="brand" routerLink="/dashboard/home" aria-label="Llama dashboard">
         <span class="brand-mark">L</span>
@@ -8,7 +8,7 @@
         }
       </a>
 
-      <button class="icon-button" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuExpanded()" aria-label="Przelacz menu">
+      <button class="icon-button" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuExpanded()" [aria-label]="( 'SWITCH' | translate )">
         <svg aria-hidden="true" viewBox="0 0 24 24">
           <path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" />
         </svg>
@@ -22,11 +22,11 @@
           [routerLink]="item.route"
           routerLinkActive="menu-link--active"
           [routerLinkActiveOptions]="{ exact: true }"
-          [attr.title]="!isMenuExpanded() ? item.label : null"
+          [attr.title]="!isMenuExpanded() ? (item.label | translate) : null"
         >
-          <span class="menu-icon" aria-hidden="true">{{ item.label.charAt(0) }}</span>
+          <span class="menu-icon" aria-hidden="true">{{ (item.label | translate).charAt(0) }}</span>
           @if (isMenuExpanded()) {
-            <span class="menu-label">{{ item.label }}</span>
+            <span class="menu-label">{{ item.label | translate }}</span>
           }
         </a>
       }
@@ -35,7 +35,7 @@
     <div class="sidebar-footer">
       @if (isMenuExpanded()) {
         <div class="user-summary">
-          <span class="user-label">Zalogowany</span>
+          <span class="user-label">{{ 'LOGGED' | translate }}</span>
           <span class="user-name">{{ displayName() }}</span>
         </div>
       }
@@ -43,7 +43,7 @@
       <button class="logout-button" type="button" (click)="logout()" [disabled]="isLoggingOut()">
         <span class="menu-icon" aria-hidden="true">W</span>
         @if (isMenuExpanded()) {
-          <span>{{ isLoggingOut() ? 'Wylogowywanie' : 'Wyloguj' }}</span>
+          <span>{{ (isLoggingOut() ? 'LOG_IN' : 'LOG_OUT') | translate }}</span>
         }
       </button>
     </div>
