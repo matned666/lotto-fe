@@ -40,7 +40,7 @@ export class LottoCardFormComponent implements OnInit {
     firstDrawDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     numberOfDraws: new FormControl(1, {
       nonNullable: true,
-      validators: [Validators.required, Validators.min(1), Validators.max(20)]
+      validators: [Validators.required, Validators.min(1), Validators.max(10)]
     }),
     drawType: new FormControl<DrawType>(DrawType.LOTTO, {
       nonNullable: true,
@@ -132,7 +132,7 @@ export class LottoCardFormComponent implements OnInit {
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.resultMessage.set('Uzupelnij wszystkie wymagane pola.');
+      this.resultMessage.set(this.getValidationMessage());
       return;
     }
 
@@ -154,7 +154,13 @@ export class LottoCardFormComponent implements OnInit {
         this.isResultsPopupOpen.set(results.length > 0);
         this.resultMessage.set(`Zapisano karte. Liczba wynikow: ${results.length}.`);
       },
-      error: () => {
+      error: err => {
+        if (err.status === 429) {
+          this.resultMessage.set(
+            'Przekroczono limit zapytań. Spróbuj ponownie za chwilę.'
+          );
+          return;
+        }
         this.resultMessage.set('Nie udalo sie zapisac albo sprawdzic kuponu.');
       }
     });
@@ -333,5 +339,74 @@ export class LottoCardFormComponent implements OnInit {
     if (matchingCount === 2) return 'brak-wygranej2';
     if (matchingCount === 1) return 'brak-wygranej1';
     return 'brak-wygranej0';
+  }
+
+  private getValidationMessage(): string {
+    let errorMessages: string[] = [];
+    if (this.form.controls.firstDrawDate.hasError('required')) {
+      errorMessages.push('Wybierz datę pierwszego losowania.');
+    }
+
+    if (this.form.controls.numberOfDraws.hasError('required')) {
+      errorMessages.push('Podaj liczbę losowań.');
+    }
+
+    if (this.form.controls.numberOfDraws.hasError('min')) {
+      errorMessages.push('Minimalna liczba losowań to 1.');
+    }
+
+    if (this.form.controls.numberOfDraws.hasError('max')) {
+      errorMessages.push('Maksymalna liczba losowań to 10.');
+    }
+
+    if (this.form.controls.drawType.hasError('required')) {
+      errorMessages.push('Wybierz typ losowania.');
+    }
+
+    const numbers = this.form.controls.numbers;
+
+    if (numbers.hasError('minlength')) {
+      errorMessages.push('Dodaj przynajmniej jeden zakład.');
+    }
+
+    if (numbers.hasError('maxlength')) {
+      errorMessages.push('Możesz dodać maksymalnie 10 zakładów.');
+    }
+
+    let hasRequiredError = false;
+    let hasRangeError = false;
+    let hasUniqueError = false;
+
+    this.form.controls.numbers.controls.forEach(group => {
+      const numbersArray = group.controls.numbers;
+
+      if (numbersArray.hasError('uniqueNumbers')) {
+        hasUniqueError = true;
+      }
+
+      numbersArray.controls.forEach(control => {
+        if (control.hasError('required')) {
+          hasRequiredError = true;
+        }
+
+        if (control.hasError('min') || control.hasError('max')) {
+          hasRangeError = true;
+        }
+      });
+    });
+
+    if (hasRequiredError) {
+      errorMessages.push('Wszystkie liczby muszą być uzupełnione.');
+    }
+
+    if (hasRangeError) {
+      errorMessages.push('Liczby muszą być z zakresu 1-49.');
+    }
+
+    if (hasUniqueError) {
+      errorMessages.push('Liczby w jednym zakładzie nie mogą się powtarzać.');
+    }
+
+    return errorMessages.join(' ');
   }
 }

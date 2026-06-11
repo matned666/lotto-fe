@@ -22,7 +22,7 @@
 
       <label>
         <span>Liczba losowan</span>
-        <input type="number" min="1" max="20" step="1" formControlName="numberOfDraws" />
+        <input type="number" min="1" max="10" step="1" formControlName="numberOfDraws" />
       </label>
 
       <label>
@@ -47,7 +47,9 @@
         <fieldset class="ticket" [formGroupName]="ticketIndex">
           <legend>Zestaw {{ ticketIndex + 1 }}</legend>
 
-          <div class="number-row" formArrayName="numbers">
+          <div class="number-row"
+               formArrayName="numbers"
+               [class.has-error]="numberControls(ticket).hasError('duplicatedNumbers') && numberControls(ticket).touched">
             @for (numberControl of numberControls(ticket).controls; track numberControl; let numberIndex = $index) {
               <label class="number-field">
                 <span>{{ numberIndex + 1 }}</span>
@@ -59,6 +61,7 @@
                   [formControlName]="numberIndex"
                   [attr.aria-label]="'Liczba ' + (numberIndex + 1) + ' w zestawie ' + (ticketIndex + 1)"
                 />
+
               </label>
             }
           </div>
