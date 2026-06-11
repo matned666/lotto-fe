@@ -1,16 +1,17 @@
 import {DashboardMenuItem} from "../../../model/dashboard-menu-item";
-import {Injectable} from "@angular/core";
+import {inject, Injectable} from "@angular/core";
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class MenuService {
 
-    readonly menuItems: DashboardMenuItem[] = [
-        {
-            label: 'Sprawdź dużego lotka',
-            route: 'lotto',
-        },
-    ];
+  readonly menuItems: DashboardMenuItem[] = [
+    {
+      label: 'MENU.LOTTO_CHECK',
+      route: 'lotto',
+    },
+  ];
 }
 

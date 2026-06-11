@@ -4,24 +4,24 @@
       <label>
         <span>Wczytaj zapisana karte</span>
         <select [value]="selectedCardId() ?? ''" (change)="selectSavedCard($any($event.target).value)">
-          <option value="">Nowa karta</option>
+          <option value="">{{ 'FORM.NEW_CARD' | translate}}</option>
           @for (card of savedCards(); track card.id) {
             <option [value]="card.id">{{ savedCardLabel(card) }}</option>
           }
         </select>
       </label>
 
-      <button class="clear-button" type="button" (click)="clearCard()">Wyczysc karte</button>
+      <button class="clear-button" type="button" (click)="clearCard()">{{ 'FORM.CLEAR_CARD' | translate}}</button>
     </div>
 
     <div class="form-grid">
       <label>
-        <span>Data pierwszego losowania</span>
+        <span>{{ 'FORM.FIRST_DRAW_DATE' | translate}}</span>
         <input type="date" formControlName="firstDrawDate" />
       </label>
 
       <label>
-        <span>Liczba losowan</span>
+        <span>{{ 'FORM.NUMBER_OF_DRAWS' | translate }}</span>
         <input type="number" min="1" max="10" step="1" formControlName="numberOfDraws" />
       </label>
 
@@ -37,9 +37,9 @@
 
     <div class="numbers-header">
       <div>
-        <p class="section-label">Zestawy liczb</p>
+        <p class="section-label">{{ 'FORM.NUMBERS_SET' | translate }}</p>
       </div>
-      <button class="icon-button add-button" type="button" aria-label="Dodaj zestaw liczb" (click)="addNumbers()">+</button>
+      <button class="icon-button add-button" type="button" [aria-label]="'FORM.ADD_NUMBERS_SET' | translate " (click)="addNumbers()">+</button>
     </div>
 
     <div class="tickets" formArrayName="numbers">
@@ -59,7 +59,7 @@
                   max="49"
                   inputmode="numeric"
                   [formControlName]="numberIndex"
-                  [attr.aria-label]="'Liczba ' + (numberIndex + 1) + ' w zestawie ' + (ticketIndex + 1)"
+                  [attr.aria-label]="('FORM.NUMBER_IN_SET' | translate:{number: numberIndex + 1,set: ticketIndex + 1})"
                 />
 
               </label>
@@ -67,13 +67,13 @@
           </div>
 
           @if (numberControls(ticket).hasError('duplicatedNumbers') && numberControls(ticket).touched) {
-            <p class="field-error">Liczby w jednym zestawie nie moga sie powtarzac.</p>
+            <p class="field-error">{{ 'ERRORS.DUPLICATED_NUMBERS' | translate }}</p>
           }
 
           <button
             class="icon-button remove-button"
             type="button"
-            aria-label="Usun zestaw liczb"
+            [aria-label]="( 'FORM.REMOVE_SET' | translate )"
             [disabled]="!canRemoveNumbers()"
             (click)="removeNumbers(ticketIndex)"
           >
@@ -86,10 +86,10 @@
     <div class="actions">
       <p class="status">{{ resultMessage() }}</p>
       @if (formattedResults().length > 0) {
-        <button class="clear-button" type="button" (click)="openResultsPopup()">Pokaz wyniki</button>
+        <button class="clear-button" type="button" (click)="openResultsPopup()">{{ 'FORM.SHOW_RESULTS' | translate }}</button>
       }
       <button class="submit-button" type="submit" [disabled]="isSubmitting()">
-        {{ isSubmitting() ? 'Wysylanie...' : 'Sprawdz kupon' }}
+        {{ (isSubmitting() ? 'FORM.SENDING' : 'FORM.CHECK') | translate }}
       </button>
     </div>
   </form>
@@ -105,22 +105,22 @@
       >
         <header class="results-popup-header">
           <div>
-            <p class="section-label">Wyniki</p>
-            <h2 id="results-title">Wyniki sprawdzenia</h2>
-            <p class="wins-summary">Wygrane: {{ winningResultsCount() }}</p>
+            <p class="section-label">{{ 'FORM.RESULTS' | translate }}</p>
+            <h2 id="results-title">{{ 'FORM.CHECK_RESULTS' | translate }}</h2>
+            <p class="wins-summary">{{ 'FORM.WINS' | translate:{ winingResults: winningResultsCount() } }}</p>
           </div>
-          <button class="icon-button close-button" type="button" aria-label="Zamknij wyniki" (click)="closeResultsPopup()">x</button>
+          <button class="icon-button close-button" type="button" [aria-label]="( 'FORM.CLOSE_RESULTS' | translate )" (click)="closeResultsPopup()">x</button>
         </header>
 
         <div class="results-table-wrap">
           <table class="results-table">
             <thead>
               <tr>
-                <th>Wynik</th>
-                <th>Data</th>
-                <th>Zaklad</th>
-                <th>Numery z losowania</th>
-                <th>Typ</th>
+                <th>{{ 'FORM.TABLE.RESULT' | translate }}</th>
+                <th>{{ 'FORM.TABLE.DATE' | translate }}</th>
+                <th>{{ 'FORM.TABLE.DRAW' | translate }}</th>
+                <th>{{ 'FORM.TABLE.NUMBERS' | translate }}</th>
+                <th>{{ 'FORM.TABLE.TYPE' | translate }}</th>
               </tr>
             </thead>
             <tbody>

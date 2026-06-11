@@ -1,0 +1,60 @@
+{
+  "START": {
+    "WELCOME": "Witaj w Llama",
+    "LOG_IN_AND_START": "Zaloguj sie i ruszamy dalej.",
+    "LOG_IN_WITH_GITHUB": "Zaluguj się z Github",
+    "LOG_IN_WITH_GOOGLE": "Zaluguj się z Google"
+  },
+  "MAIN_MENU": "Menu główne",
+  "SWITCH": "Przełącz menu",
+  "LOGGED": "Zalogowany",
+  "LOG_IN": "Zaloguj",
+  "LOG_OUT": "Wyloguj",
+  "MENU": {
+    "LOTTO_CHECK": "Sprawdź dużego lotka"
+  },
+  "FORM": {
+    "FIRST_DRAW_DATE": "Data pierwszego losowania",
+    "NUMBER_OF_DRAWS": "Liczba losowań",
+    "DRAW_TYPE": "Typ losowania",
+    "CHECK_TICKET": "Sprawdź kupon",
+    "NEW_CARD": "Nowa karta",
+    "CLEAR_CARD": "Wyczyść kartę",
+    "NUMBER_IN_SET": "Liczba {{number}} w zestawie {{set}}",
+    "ADD_NUMBERS_SET": "Dodaj zestaw liczb",
+    "NUMBERS_SET": "Zestawy liczb",
+    "REMOVE_SET": "Usuń zestaw liczb",
+    "SHOW_RESULTS": "Pokaż wyniki",
+    "SENDING": "Wysylanie...",
+    "CHECK": "Sprawdź kupon",
+    "RESULTS": "Wyniki",
+    "CHECK_RESULTS": "Wyniki sprawdzenia",
+    "WINS": "Wygrane: {{winingResults}}",
+    "CLOSE_RESULTS": "Zamknij wyniki",
+    "TABLE": {
+      "RESULT": "Wynik",
+      "DATE": "Data",
+      "DRAW": "Zaklad",
+      "NUMBERS": "Numery z losowania",
+      "TYPE": "Typ"
+    },
+    "INFO": {
+      "CARD_SAVED": "Zapisano karte. Liczba wynikow: {{resultsLength}}.",
+      "NO_NUMBERS": "Brak liczb"
+    }
+  },
+  "ERRORS": {
+    "REQUIRED_DATE": "Wybierz datę pierwszego losowania.",
+    "REQUIRED_TYPE": "Wybierz typ losowania.",
+    "REQUIRED_AT_LEAST_1_DRAW": "Dodaj przynajmniej jeden zakład.",
+    "REQUIRED_MAX_10_DRAWS": "Dodaj przynajmniej jeden zakład.",
+    "INVALID_DRAWS_COUNT": "Liczba losowań musi być z zakresu 1-10.",
+    "INVALID_DRAWS_COUNT_MIN": "Minimalna liczba losowań to 1.",
+    "INVALID_DRAWS_COUNT_MAX": "Maksymalna liczba losowań to 10.",
+    "NUMBERS_REQUIRED": "Wszystkie liczby muszą być uzupełnione.",
+    "NUMBERS_RANGE": "Liczby muszą być z zakresu 1-49.",
+    "DUPLICATED_NUMBERS": "Liczby w jednym zestawie nie mogą się powtarzać.",
+    "TOO_MANY_REQUESTS": "Przekroczono limit zapytań. Spróbuj ponownie za chwilę.",
+    "COULDNT_LOAD_CARDS": "Nie udało się pobrać zapisanych kart."
+  }
+}

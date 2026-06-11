@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import {MenuService} from "../../../core/menu/model/menu.service";
+import {TranslatePipe} from '@ngx-translate/core';
 
 interface DashboardMenuItem {
   label: string;
@@ -13,7 +14,7 @@ interface DashboardMenuItem {
   selector: 'app-dashboard-page',
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.css',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe],
 })
 export class DashboardPageComponent {
   private readonly authService = inject(AuthService);
