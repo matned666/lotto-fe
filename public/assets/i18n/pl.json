@@ -11,7 +11,11 @@
   "LOG_IN": "Zaloguj",
   "LOG_OUT": "Wyloguj",
   "MENU": {
-    "LOTTO_CHECK": "Sprawdź dużego lotka"
+    "LOTTO_CHECK": "Sprawdź dużego lotka",
+    "STATS": "Statystyki dużego lotka"
+  },
+  "STATS": {
+    "TOP_10_NUMBERS": "10 najczęściej losowanych liczb w Dużym Lotku: "
   },
   "FORM": {
     "READ_SAVED_CARD": "Wczytaj zapisaną kartę",

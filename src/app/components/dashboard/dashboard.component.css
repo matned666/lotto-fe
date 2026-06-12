@@ -75,3 +75,9 @@ h1 {
     max-height: 52dvh;
   }
 }
+
+.top_numbers {
+    font-weight: bold;
+    font-size: clamp(1.08rem, 1.5vw, 1.35rem);
+    color: #2f7d5b;
+}

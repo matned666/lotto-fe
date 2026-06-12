@@ -1,8 +1,10 @@
 <article class="dashboard-home">
     <div class="welcome-copy">
-        <p class="eyebrow">Dashboard</p>
-        <h1>Informacje</h1>
-        <p class="lead">Część informacyjna.</p>
+        <p class="eyebrow">Llama stats</p>
+        <h1> {{ 'MENU.STATS' | translate }} </h1>
+        <p class="lead"> {{ 'STATS.TOP_10_NUMBERS' | translate }}</p>
+        <div class="top_numbers" >{{ top10Numbers() }}</div>
+
     </div>
 
     <figure class="llama-visual">

@@ -12,6 +12,10 @@ export class MenuService {
       label: 'MENU.LOTTO_CHECK',
       route: 'lotto',
     },
+    {
+      label: 'MENU.STATS',
+      route: 'stats',
+    },
   ];
 }
 

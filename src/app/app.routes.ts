@@ -29,9 +29,9 @@ export const routes: Routes = [
         loadComponent: () => import('./components/dashboard/dashboard-home/dashboard-home.component').then((m) => m.DashboardHomeComponent),
       },
       {
-        path: 'info',
-        title: 'Info',
-        loadComponent: () => import('./components/dashboard/info/info.component').then((m) => m.InfoComponent),
+        path: 'stats',
+        title: 'Stats',
+        loadComponent: () => import('./components/dashboard/stats/stats.component').then((m) => m.StatsComponent),
       },
       {
         path: 'settings',
