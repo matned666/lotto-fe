@@ -1,12 +1,12 @@
 import { ApplicationConfig, provideAppInitializer, provideBrowserGlobalErrorListeners, inject } from '@angular/core';
-import {HttpClient, provideHttpClient, withInterceptors, withXsrfConfiguration} from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXsrfConfiguration} from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { backendCredentialsInterceptor } from './core/auth/backend-credentials.interceptor';
 import { AppConfigService } from './core/config/app-config.service';
-import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
-import {provideTranslateHttpLoader, TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {provideTranslateService} from '@ngx-translate/core';
+import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
 import { authInterceptor } from './interceptor/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
