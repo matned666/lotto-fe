@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import {Component, OnInit, inject, signal, effect} from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Observable, finalize, switchMap } from 'rxjs';
 import { DrawType, LottoCard } from '../../../model/lotto-card';
@@ -61,6 +61,17 @@ export class LottoCardFormComponent implements OnInit {
   protected readonly isResultsPopupOpen = signal(false);
   protected readonly winningResultsCount = signal(0);
 
+  selectedCardControl = new FormControl<string>('');
+
+  constructor() {
+    effect(() => {
+      this.selectedCardControl.setValue(
+        String(this.selectedCardId() ?? ''),
+        { emitEvent: false }
+      );
+    });
+  }
+
   ngOnInit(): void {
     this.loadSavedCards(true);
   }
@@ -90,14 +101,17 @@ export class LottoCardFormComponent implements OnInit {
   }
 
   protected selectSavedCard(cardId: string): void {
-    const id = Number(cardId);
-    const card = this.savedCards().find((savedCard) => savedCard.id === id);
+    if (!cardId) {
+      this.clearCard();
+      return;
+    }
 
+    const id = Number(cardId);
+    const card = this.savedCards().find(savedCard => savedCard.id === id);
     if (!card) {
       this.selectedCardId.set(null);
       return;
     }
-
     this.fillForm(card);
   }
 
@@ -145,9 +159,12 @@ export class LottoCardFormComponent implements OnInit {
       switchMap((savedCard) => {
         this.selectedCardId.set(savedCard.id ?? null);
         this.upsertSavedCard(savedCard);
+        this.selectSavedCard(String(savedCard.id));
         return this.lottoCheckService.check(this.toCheckPayload(savedCard));
       }),
-      finalize(() => this.isSubmitting.set(false))
+      finalize(() => {
+        this.isSubmitting.set(false)
+      })
     ).subscribe({
       next: (results) => {
         const formattedResults = this.sortResultsByDate(results).map((result) => this.toFormattedResult(result));
@@ -168,7 +185,7 @@ export class LottoCardFormComponent implements OnInit {
     });
   }
 
-  private loadSavedCards(fillLatest: boolean): void {
+  private loadSavedCards(fillLatest: Boolean): void {
     this.lottoCheckService.getCards().subscribe({
       next: (cards) => {
         this.savedCards.set(cards);
@@ -392,4 +409,18 @@ export class LottoCardFormComponent implements OnInit {
 
     return errorMessages.join(' ');
   }
+
+  protected deleteCard(number: number) {
+    this.lottoCheckService.deleteCard(number).subscribe({
+      next: (result) => {
+        this.loadSavedCards(result);
+        this.clearCard();
+      },
+      error: () => {
+        this.resultMessage.set(this.translate.instant('ERRORS.COULDNT_DELETE_CARDS'));
+      }
+    });
+  }
+
+  protected readonly String = String;
 }

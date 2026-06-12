@@ -2,16 +2,26 @@
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <div class="history-row">
       <label>
-        <span>{{ 'READ_SAVED_CARD' | translate }}</span>
-        <select [value]="selectedCardId() ?? ''" (change)="selectSavedCard($any($event.target).value)">
-          <option value="">{{ 'FORM.NEW_CARD' | translate}}</option>
+        <span>{{ 'FORM.READ_SAVED_CARD' | translate }}
+        </span>
+        <select [formControl]="selectedCardControl" (change)="selectSavedCard($any($event.target).value)">
+          <option value="" >{{ 'FORM.NEW_CARD' | translate }}</option>
+
           @for (card of savedCards(); track card.id) {
-            <option [value]="card.id">{{ savedCardLabel(card) }}</option>
+            <option [value]="String(card.id)">
+              {{ savedCardLabel(card) }}
+            </option>
           }
         </select>
-      </label>
 
-      <button class="clear-button" type="button" (click)="clearCard()">{{ 'FORM.CLEAR_CARD' | translate}}</button>
+
+      </label>
+      <div>
+        @if (selectedCardId()) {
+          <button class="delete-button" type="button" (click)="deleteCard(selectedCardId()!)">−</button>
+        }
+        <button class="clear-button" type="button" (click)="clearCard()">{{ 'FORM.CLEAR_CARD' | translate}}</button>
+      </div>
     </div>
 
     <div class="form-grid">
@@ -26,7 +36,8 @@
       </label>
 
       <label>
-        <span>Typ losowania</span>
+        <span>Typ losowania
+        </span>
         <select formControlName="drawType">
           @for (type of drawTypes; track type.value) {
             <option [value]="type.value">{{ type.label }}</option>
@@ -43,16 +54,15 @@
     </div>
 
     <div class="tickets" formArrayName="numbers">
-      @for (ticket of numbers.controls; track ticket; let ticketIndex = $index) {
+      @for (ticket of numbers.controls; track $index; let ticketIndex = $index) {
         <fieldset class="ticket" [formGroupName]="ticketIndex">
           <legend>Zestaw {{ ticketIndex + 1 }}</legend>
 
           <div class="number-row"
                formArrayName="numbers"
                [class.has-error]="numberControls(ticket).hasError('duplicatedNumbers') && numberControls(ticket).touched">
-            @for (numberControl of numberControls(ticket).controls; track numberControl; let numberIndex = $index) {
+            @for (numberControl of numberControls(ticket).controls; track $index; let numberIndex = $index) {
               <label class="number-field">
-                <span>{{ numberIndex + 1 }}</span>
                 <input
                   type="number"
                   min="1"

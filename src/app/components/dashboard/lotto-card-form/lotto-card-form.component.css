@@ -137,6 +137,20 @@ h2 {
   background: #9f3038;
 }
 
+
+.delete-button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  margin-right: 10px;
+  background: #9f3038;
+  color: white;
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .field-error,
 .status {
   margin: 10px 0 0;
@@ -314,6 +328,11 @@ h2 {
     margin-top: 12px;
   }
 
+  .delete-button {
+    position: static;
+    margin-top: 12px;
+  }
+
   .number-row {
     grid-template-columns: repeat(2, minmax(72px, 1fr));
   }
@@ -365,4 +384,8 @@ input.ng-invalid.ng-touched,
 select.ng-invalid.ng-touched {
   border-color: #dc2626;
   box-shadow: 0 0 0 2px rgb(220 38 38 / 0.15);
+}
+
+.margin-right-10 {
+  margin-right: 10px;
 }

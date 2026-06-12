@@ -2,8 +2,8 @@
   "START": {
     "WELCOME": "Witaj w Llama",
     "LOG_IN_AND_START": "Zaloguj sie i ruszamy dalej.",
-    "LOG_IN_WITH_GITHUB": "Zaluguj się z Github",
-    "LOG_IN_WITH_GOOGLE": "Zaluguj się z Google"
+    "LOG_IN_WITH_GITHUB": "Zaloguj się z Github",
+    "LOG_IN_WITH_GOOGLE": "Zaloguj się z Google"
   },
   "MAIN_MENU": "Menu główne",
   "SWITCH": "Przełącz menu",
@@ -56,6 +56,7 @@
     "NUMBERS_RANGE": "Liczby muszą być z zakresu 1-49.",
     "DUPLICATED_NUMBERS": "Liczby w jednym zestawie nie mogą się powtarzać.",
     "TOO_MANY_REQUESTS": "Przekroczono limit zapytań. Spróbuj ponownie za chwilę.",
-    "COULDNT_LOAD_CARDS": "Nie udało się pobrać zapisanych kart."
+    "COULDNT_LOAD_CARDS": "Nie udało się pobrać zapisanych kart.",
+    "COULDNT_DELETE_CARDS": "Nie udało się usunąć zapisanej karty."
   }
 }

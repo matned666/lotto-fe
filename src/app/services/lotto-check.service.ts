@@ -42,4 +42,9 @@ export class LottoCheckService {
   getCards(): Observable<LottoCard[]> {
     return this.http.get<LottoCard[]>(`${this.appConfig.backendUrl}/cards`);
   }
+
+  deleteCard(number: number): Observable<Boolean> {
+    return this.http.delete<Boolean>(`${this.appConfig.backendUrl}/cards/${number}`)
+  }
+
 }
