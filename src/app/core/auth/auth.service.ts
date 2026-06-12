@@ -88,4 +88,11 @@ export class AuthService {
     document.body.appendChild(form);
     form.submit();
   }
+
+  clearLocalState(): void {
+    this.userState.set(null);
+    this.csrfTokenService.clear();
+    this.statusState.set('anonymous');
+    this.errorMessageState.set(null);
+  }
 }

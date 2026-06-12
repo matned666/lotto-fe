@@ -7,6 +7,7 @@ import { backendCredentialsInterceptor } from './core/auth/backend-credentials.i
 import { AppConfigService } from './core/config/app-config.service';
 import {provideTranslateService, TranslateLoader} from '@ngx-translate/core';
 import {provideTranslateHttpLoader, TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { authInterceptor } from './interceptor/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,16 +18,17 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([backendCredentialsInterceptor]),
       withXsrfConfiguration({
         cookieName: 'XSRF-TOKEN',
-        headerName: 'X-XSRF-TOKEN'
-      })
+        headerName: 'X-XSRF-TOKEN',
+      }),
     ),
     provideTranslateService({
       lang: 'pl',
       fallbackLang: 'pl',
       loader: provideTranslateHttpLoader({
         prefix: './assets/i18n/',
-        suffix: '.json'
-      })
-    })
-  ]
+        suffix: '.json',
+      }),
+    }),
+    provideHttpClient(withInterceptors([authInterceptor])),
+  ],
 };
