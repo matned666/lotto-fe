@@ -1,10 +1,11 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, catchError, map, of, switchMap, tap, throwError } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, tap, throwError, take, EMPTY } from 'rxjs';
 
 import { AppConfigService } from '../config/app-config.service';
-import { AuthenticatedUser, AuthStatus, CsrfTokenResponse } from './auth.models';
+import { AuthenticatedUser, AuthStatus, CsrfTokenResponse, OAuthType } from './auth.models';
 import { CsrfTokenService } from './csrf-token.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
@@ -23,12 +24,21 @@ export class AuthService {
   readonly errorMessage = this.errorMessageState.asReadonly();
   readonly isAuthenticated = computed(() => this.statusState() === 'authenticated');
 
-  loginByGithub(): void {
-    window.location.assign(`${this.appConfig.backendUrl}/oauth2/authorization/github`);
-  }
-
-  loginByGoogle(): void {
-    window.location.assign(`${this.appConfig.backendUrl}/oauth2/authorization/google`);
+  loginByOAuth(oauthType: OAuthType): void {
+    this.http
+      .get(`${this.appConfig.backendUrl}/api/auth/csrf`)
+      .pipe(
+        take(1),
+        catchError((error: HttpErrorResponse) => {
+          this.userState.set(null);
+          this.statusState.set('anonymous');
+          this.errorMessageState.set('ERRORS.LOGIN_ERROR');
+          return EMPTY;
+        }),
+      )
+      .subscribe(() => {
+        window.location.assign(`${this.appConfig.backendUrl}/oauth2/authorization/${oauthType}`);
+      });
   }
 
   loadCurrentUser(): Observable<AuthenticatedUser | null> {
@@ -36,10 +46,12 @@ export class AuthService {
     this.errorMessageState.set(null);
 
     return this.http.get<AuthenticatedUser>(`${this.appConfig.backendUrl}/api/auth/me`).pipe(
-      switchMap((user) => this.loadCsrfToken().pipe(
-        map(() => user),
-        catchError(() => of(user)),
-      )),
+      switchMap((user) =>
+        this.loadCsrfToken().pipe(
+          map(() => user),
+          catchError(() => of(user)),
+        ),
+      ),
       tap((user) => {
         this.userState.set(user);
         this.statusState.set('authenticated');
@@ -48,7 +60,11 @@ export class AuthService {
         this.userState.set(null);
         this.csrfTokenService.clear();
         this.statusState.set('anonymous');
-        this.errorMessageState.set(error.status === 0 ? 'Backend jest chwilowo niedostepny.' : null);
+        if (error.status === 403) {
+          this.errorMessageState.set('ERRORS.USER_BLOCKED');
+        } else if (error.status === 0) {
+          this.errorMessageState.set('ERRORS.LOGIN_ERROR');
+        }
         return of(null);
       }),
     );
@@ -61,7 +77,7 @@ export class AuthService {
       tap((csrfToken) => this.submitLogoutForm(csrfToken)),
       map(() => undefined),
       catchError((error: HttpErrorResponse) => {
-        this.errorMessageState.set('Nie udalo sie wylogowac. Sprobuj ponownie.');
+        this.errorMessageState.set('ERRORS.LOGOUT_ERROR');
         return throwError(() => error);
       }),
     );
@@ -70,6 +86,10 @@ export class AuthService {
   private loadCsrfToken(): Observable<CsrfTokenResponse> {
     return this.http.get<CsrfTokenResponse>(`${this.appConfig.backendUrl}/api/auth/csrf`).pipe(
       tap((csrfToken) => this.csrfTokenService.setToken(csrfToken.token)),
+      catchError((error) => {
+        this.userState.set(null);
+        return throwError(() => error);
+      }),
     );
   }
 

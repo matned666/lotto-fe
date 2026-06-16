@@ -13,3 +13,8 @@ export interface CsrfTokenResponse {
   headerName: string;
   token: string;
 }
+
+export enum OAuthType {
+  GOOGLE = 'google',
+  GITHUB = 'github',
+}

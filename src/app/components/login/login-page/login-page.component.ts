@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import {NgOptimizedImage} from "@angular/common";
 import {TranslatePipe} from '@ngx-translate/core';
+import { OAuthType } from '../../../core/auth/auth.models';
 
 @Component({
     selector: 'app-login-page',
@@ -20,11 +21,11 @@ export class LoginPageComponent {
   protected readonly errorMessage = this.authService.errorMessage;
 
   protected loginByGithub(): void {
-    this.authService.loginByGithub();
+    this.authService.loginByOAuth(OAuthType.GITHUB);
   }
 
   protected loginByGoogle(): void {
-    this.authService.loginByGoogle();
+    this.authService.loginByOAuth(OAuthType.GOOGLE);
   }
 
 

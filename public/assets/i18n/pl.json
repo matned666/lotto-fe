@@ -63,6 +63,9 @@
     "DUPLICATED_NUMBERS": "Liczby w jednym zestawie nie mogą się powtarzać.",
     "TOO_MANY_REQUESTS": "Przekroczono limit zapytań. Spróbuj ponownie za chwilę.",
     "COULDNT_LOAD_CARDS": "Nie udało się pobrać zapisanych kart.",
-    "COULDNT_DELETE_CARDS": "Nie udało się usunąć zapisanej karty."
+    "COULDNT_DELETE_CARDS": "Nie udało się usunąć zapisanej karty.",
+    "USER_BLOCKED": "Użytkownik jest zablokowany, skontaktuj się z adminem.",
+    "LOGIN_ERROR": "Błąd podczas połączenia z serwerem.",
+    "LOGOUT_ERROR": "Nie udalo sie wylogowac. Sprobuj ponownie."
   }
 }
