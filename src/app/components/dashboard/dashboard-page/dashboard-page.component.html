@@ -36,7 +36,14 @@
       @if (isMenuExpanded()) {
         <div class="user-summary">
           <span class="user-label">{{ 'LOGGED' | translate }}</span>
-          <span class="user-name">{{ displayName() }}</span>
+          <span class="user-name">
+            @if (avatarUrl()) {
+              <img [src]="avatarUrl()" alt="" class="menu-icon user-avatar" aria-hidden="true" />
+            } @else {
+              <span class="menu-icon user-avatar" aria-hidden="true">{{ displayName().charAt(0) }}</span>
+            }
+            {{ displayName() }}
+          </span>
         </div>
       }
 

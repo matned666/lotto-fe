@@ -5,6 +5,7 @@ export interface AuthenticatedUser {
   displayName: string;
   email: string | null;
   authorities: string[];
+  avatar: string;
 }
 
 export interface CsrfTokenResponse {

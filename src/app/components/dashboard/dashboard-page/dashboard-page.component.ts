@@ -24,6 +24,7 @@ export class DashboardPageComponent {
   protected readonly isLoggingOut = signal(false);
   protected readonly isMenuExpanded = signal(true);
   protected readonly displayName = computed(() => this.authService.user()?.displayName ?? 'Llama user');
+  protected readonly avatarUrl = computed(() => this.authService.user()?.avatar ?? null);
   protected readonly menuItems: DashboardMenuItem[] = this.menuService.menuItems;
 
   protected toggleMenu(): void {

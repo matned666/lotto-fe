@@ -152,11 +152,20 @@
 }
 
 .user-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
   color: #14213d;
   font-weight: 900;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.user-avatar {
+  border-radius: 999px;
+  object-fit: cover;
 }
 
 .logout-button {
