@@ -8,7 +8,8 @@
         }
       </a>
 
-      <button class="icon-button" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuExpanded()" [aria-label]="( 'SWITCH' | translate )">
+      <button class="icon-button" type="button" (click)="toggleMenu()" [attr.aria-expanded]="isMenuExpanded()"
+              [aria-label]="( 'SWITCH' | translate )">
         <svg aria-hidden="true" viewBox="0 0 24 24">
           <path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" />
         </svg>
@@ -17,18 +18,20 @@
 
     <nav class="menu">
       @for (item of menuItems; track item.route) {
-        <a
-          class="menu-link"
-          [routerLink]="item.route"
-          routerLinkActive="menu-link--active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [attr.title]="!isMenuExpanded() ? (item.label | translate) : null"
-        >
-          <span class="menu-icon" aria-hidden="true">{{ (item.label | translate).charAt(0) }}</span>
-          @if (isMenuExpanded()) {
-            <span class="menu-label">{{ item.label | translate }}</span>
-          }
-        </a>
+        @if (hasAnyRole(item.roles)) {
+          <a
+            class="menu-link"
+            [routerLink]="item.route"
+            routerLinkActive="menu-link--active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            [attr.title]="!isMenuExpanded() ? (item.label | translate) : null"
+          >
+            <span class="menu-icon" aria-hidden="true">{{ (item.label | translate).charAt(0) }}</span>
+            @if (isMenuExpanded()) {
+              <span class="menu-label">{{ item.label | translate }}</span>
+            }
+          </a>
+        }
       }
     </nav>
 

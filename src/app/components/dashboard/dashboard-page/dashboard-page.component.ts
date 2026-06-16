@@ -8,6 +8,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 interface DashboardMenuItem {
   label: string;
   route: string;
+  roles: string[];
 }
 
 @Component({
@@ -26,6 +27,7 @@ export class DashboardPageComponent {
   protected readonly displayName = computed(() => this.authService.user()?.displayName ?? 'Llama user');
   protected readonly avatarUrl = computed(() => this.authService.user()?.avatar ?? null);
   protected readonly menuItems: DashboardMenuItem[] = this.menuService.menuItems;
+  protected readonly userRoles = computed(() => this.authService.user()?.authorities ?? []);
 
   protected toggleMenu(): void {
     this.isMenuExpanded.update((value) => !value);
@@ -37,5 +39,9 @@ export class DashboardPageComponent {
     this.authService.logout().subscribe({
       error: () => this.isLoggingOut.set(false),
     });
+  }
+
+  protected hasAnyRole(roles: string[]): boolean {
+    return roles.some(role => this.userRoles().includes(role));
   }
 }

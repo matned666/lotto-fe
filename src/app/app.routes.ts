@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { anonymousGuard, authGuard } from './core/auth/auth.guard';
+import { adminGuard, anonymousGuard, userGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -11,12 +11,18 @@ export const routes: Routes = [
   {
     path: 'login',
     canActivate: [anonymousGuard],
-    loadComponent: () => import('./components/login/login-page/login-page.component').then((m) => m.LoginPageComponent),
+    loadComponent: () =>
+      import('./components/login/login-page/login-page.component').then(
+        (m) => m.LoginPageComponent,
+      ),
   },
   {
     path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () => import('./components/dashboard/dashboard-page/dashboard-page.component').then((m) => m.DashboardPageComponent),
+    canActivate: [userGuard],
+    loadComponent: () =>
+      import('./components/dashboard/dashboard-page/dashboard-page.component').then(
+        (m) => m.DashboardPageComponent,
+      ),
     children: [
       {
         path: '',
@@ -25,20 +31,27 @@ export const routes: Routes = [
       },
       {
         path: 'lotto',
-        title: 'Dashboard',
-        loadComponent: () => import('./components/dashboard/dashboard-home/dashboard-home.component').then((m) => m.DashboardHomeComponent),
+        title: 'Lotto results',
+        loadComponent: () =>
+          import('./components/dashboard/dashboard-home/dashboard-home.component').then(
+            (m) => m.DashboardHomeComponent,
+          ),
       },
       {
         path: 'stats',
-        title: 'Stats',
-        loadComponent: () => import('./components/dashboard/stats/stats.component').then((m) => m.StatsComponent),
+        title: 'Lotto stats',
+        loadComponent: () =>
+          import('./components/dashboard/stats/stats.component').then((m) => m.StatsComponent),
       },
       {
         path: 'settings',
+        canActivate: [adminGuard],
         title: 'Settings',
-        loadComponent: () => import('./components/dashboard/settings/settings.component').then((m) => m.SettingsComponent),
+        loadComponent: () =>
+          import('./components/dashboard/settings/settings.component').then(
+            (m) => m.SettingsComponent,
+          ),
       },
-
     ],
   },
   {

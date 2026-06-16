@@ -12,7 +12,8 @@
   "LOG_OUT": "Wyloguj",
   "MENU": {
     "LOTTO_CHECK": "Sprawdź dużego lotka",
-    "STATS": "Statystyki dużego lotka"
+    "STATS": "Statystyki dużego lotka",
+    "SETTINGS": "Ustawienia aplikacji"
   },
   "STATS": {
     "TOP_NUMBERS": "{{numberOfNumbers}} najczęściej losowanych liczb w Dużym Lotku (ogólnie): ",
