@@ -12,11 +12,19 @@ import { LottoCheckService } from '../../../services/lotto-check.service';
 export class StatsComponent implements OnInit {
   private readonly lottoCheckService = inject(LottoCheckService);
 
-  top10Numbers = signal<Number[]>([]);
+  readonly NUMBER_OF_NUMBERS: Number = 6;
+
+  topNumbers = signal<Number[]>([]);
+  topNumbersByWeight = signal<Number[]>([]);
 
   ngOnInit(): void {
-    this.lottoCheckService.getMostFrequentNumbers().subscribe(numbers => {
-      this.top10Numbers.set(numbers);
+    this.lottoCheckService.getMostFrequentNumbers(this.NUMBER_OF_NUMBERS).subscribe((numbers) => {
+      this.topNumbers.set(numbers);
     });
+    this.lottoCheckService
+      .getMostFrequentNumbersByWeight(this.NUMBER_OF_NUMBERS)
+      .subscribe((numbers) => {
+        this.topNumbersByWeight.set(numbers);
+      });
   }
 }

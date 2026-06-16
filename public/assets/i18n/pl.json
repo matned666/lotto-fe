@@ -15,7 +15,8 @@
     "STATS": "Statystyki dużego lotka"
   },
   "STATS": {
-    "TOP_10_NUMBERS": "10 najczęściej losowanych liczb w Dużym Lotku: "
+    "TOP_NUMBERS": "{{numberOfNumbers}} najczęściej losowanych liczb w Dużym Lotku (ogólnie): ",
+    "TOP_NUMBERS_BY_WEIGHT": "{{numberOfNumbers}} najczęściej losowanych liczb w Dużym Lotku po ich wadze (nowsze wyniki mają wyższą wagę): "
   },
   "FORM": {
     "READ_SAVED_CARD": "Wczytaj zapisaną kartę",

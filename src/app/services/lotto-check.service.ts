@@ -43,8 +43,12 @@ export class LottoCheckService {
     return this.http.get<LottoCard[]>(`${this.appConfig.backendUrl}/cards`);
   }
 
-  getMostFrequentNumbers(): Observable<number[]> {
-    return this.http.get<number[]>(`${this.appConfig.backendUrl}/stats/most-frequent-numbers`);
+  getMostFrequentNumbers(numberOfNumbers: Number): Observable<number[]> {
+    return this.http.get<number[]>(`${this.appConfig.backendUrl}/stats/most-frequent-numbers?numberOfNumbers=${numberOfNumbers}`);
+  }
+
+  getMostFrequentNumbersByWeight(numberOfNumbers: Number): Observable<number[]> {
+    return this.http.get<number[]>(`${this.appConfig.backendUrl}/stats/most-frequent-numbers-by-weight?numberOfNumbers=${numberOfNumbers}`);
   }
 
   deleteCard(number: number): Observable<Boolean> {

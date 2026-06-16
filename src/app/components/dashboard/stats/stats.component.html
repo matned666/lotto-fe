@@ -2,8 +2,13 @@
     <div class="welcome-copy">
         <p class="eyebrow">Llama stats</p>
         <h1> {{ 'MENU.STATS' | translate }} </h1>
-        <p class="lead"> {{ 'STATS.TOP_10_NUMBERS' | translate }}</p>
-        <div class="top_numbers" >{{ top10Numbers() }}</div>
+        <p class="lead"> {{ 'STATS.TOP_NUMBERS' | translate:{numberOfNumbers: NUMBER_OF_NUMBERS} }}</p>
+        <div class="top_numbers" >{{ topNumbers() }}</div>
+        <br>
+        <p class="lead"> {{ 'STATS.TOP_NUMBERS_BY_WEIGHT' | translate:{numberOfNumbers: NUMBER_OF_NUMBERS} }}</p>
+        <div class="top_numbers" >{{ topNumbersByWeight() }}</div>
+
+
 
     </div>
 
