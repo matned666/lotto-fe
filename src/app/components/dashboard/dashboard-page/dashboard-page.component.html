@@ -2,7 +2,7 @@
   <aside class="sidebar" [aria-label]="( 'MAIN_MENU' | translate )">
     <div class="sidebar-header">
       <a class="brand" routerLink="/dashboard/home" aria-label="Llama dashboard">
-        <span class="brand-mark">L</span>
+        <span class="brand-mark"><mat-icon>stars</mat-icon></span>
         @if (isMenuExpanded()) {
           <span class="brand-text">Llama</span>
         }
@@ -26,7 +26,7 @@
             [routerLinkActiveOptions]="{ exact: true }"
             [attr.title]="!isMenuExpanded() ? (item.label | translate) : null"
           >
-            <span class="menu-icon" aria-hidden="true">{{ (item.label | translate).charAt(0) }}</span>
+            <span class="menu-icon" aria-hidden="true"><mat-icon>{{ item.icon }}</mat-icon></span>
             @if (isMenuExpanded()) {
               <span class="menu-label">{{ item.label | translate }}</span>
             }
@@ -51,7 +51,7 @@
       }
 
       <button class="logout-button" type="button" (click)="logout()" [disabled]="isLoggingOut()">
-        <span class="menu-icon" aria-hidden="true">W</span>
+        <span class="menu-icon" aria-hidden="true"><mat-icon>logout</mat-icon></span>
         @if (isMenuExpanded()) {
           <span>{{ (isLoggingOut() ? 'LOG_IN' : 'LOG_OUT') | translate }}</span>
         }

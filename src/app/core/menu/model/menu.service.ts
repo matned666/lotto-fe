@@ -10,16 +10,19 @@ export class MenuService {
     {
       label: 'MENU.LOTTO_CHECK',
       route: 'lotto',
+      icon: 'casino',
       roles: ['ROLE_USER', 'ROLE_ADMIN'],
     },
     {
       label: 'MENU.STATS',
       route: 'stats',
+      icon: 'dashboard',
       roles: ['ROLE_USER', 'ROLE_ADMIN'],
     },
     {
       label: 'MENU.SETTINGS',
       route: 'settings',
+      icon: 'settings',
       roles: ['ROLE_USER', 'ROLE_ADMIN'],
     },
   ];
