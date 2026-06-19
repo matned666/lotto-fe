@@ -20,7 +20,7 @@ export class MenuService {
     {
       label: 'MENU.SETTINGS',
       route: 'settings',
-      roles: ['ROLE_ADMIN'],
+      roles: ['ROLE_USER', 'ROLE_ADMIN'],
     },
   ];
 }

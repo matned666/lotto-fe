@@ -50,6 +50,23 @@
       "NO_NUMBERS": "Brak liczb"
     }
   },
+  "SETTINGS": {
+    "TITLE": "Ustawienia:"
+  },
+  "PROP": {
+    "ID": "Identyfikator",
+    "TYPE": "Typ",
+    "NAME": "Nazwa",
+    "VALUE": "Wartość",
+    "ENABLED": "Włączony",
+    "NO_PROPS_AVAILABLE": "Brak ustawień.",
+    "EDIT_TITLE": "Edycja",
+    "PROPERTY_DETAILS": "Szczegóły ustawienia",
+    "VALUE_REQUIRED": "Pole wartości jest obowiązkowe!",
+    "CANCEL": "Anuluj",
+    "SAVING": "Zapisywanie...",
+    "SAVE": "Zapisz"
+  },
   "ERRORS": {
     "REQUIRED_DATE": "Wybierz datę pierwszego losowania.",
     "REQUIRED_TYPE": "Wybierz typ losowania.",
@@ -66,6 +83,7 @@
     "COULDNT_DELETE_CARDS": "Nie udało się usunąć zapisanej karty.",
     "USER_BLOCKED": "Użytkownik jest zablokowany, skontaktuj się z adminem.",
     "LOGIN_ERROR": "Błąd podczas połączenia z serwerem.",
-    "LOGOUT_ERROR": "Nie udalo sie wylogowac. Sprobuj ponownie."
+    "LOGOUT_ERROR": "Nie udalo sie wylogowac. Sprobuj ponownie.",
+    "COULDNT_LOAD_PROPERTIES": "Nie udalo sie załadować zmiennych."
   }
 }

@@ -45,7 +45,6 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
-        canActivate: [adminGuard],
         title: 'Settings',
         loadComponent: () =>
           import('./components/dashboard/settings/settings.component').then(

@@ -1,11 +1,129 @@
-<article class="dashboard-home">
-    <div class="welcome-copy">
-        <p class="eyebrow">Dashboard</p>
-        <h1>Ustawienia</h1>
-        <p class="lead">Ustawienia</p>
+<section class="settings-panel">
+  <div class="settings-header">
+    <div>
+      <h2>{{ 'SETTINGS.TITLE' | translate }}</h2>
     </div>
+    @if (resultMessage()) {
+      <p class="status-message">{{ resultMessage() }}</p>
+    }
+  </div>
 
-    <figure class="llama-visual">
-        <img src="/assets/llama-repairing.png" alt="Naprawiająca lama"/>
-    </figure>
-</article>
+  <div class="table-shell mat-elevation-z2">
+    <table mat-table [dataSource]="properties()" class="properties-table">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>{{ 'PROP.ID' | translate }}</th>
+        <td mat-cell *matCellDef="let property">{{ property.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>{{ 'PROP.TYPE' | translate }}</th>
+        <td mat-cell *matCellDef="let property">{{ property.type }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'PROP.NAME' | translate }}</th>
+        <td mat-cell *matCellDef="let property">{{ property.label }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef>{{ 'PROP.VALUE' | translate }}</th>
+        <td mat-cell *matCellDef="let property" class="value-cell">{{ property.value }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="enabled">
+        <th mat-header-cell *matHeaderCellDef>{{ 'PROP.ENABLED' | translate }}</th>
+        <td mat-cell *matCellDef="let property">
+          <span class="enabled-indicator" [class.enabled]="property.enabled" [class.disabled]="!property.enabled">
+            <mat-icon>{{ property.enabled ? 'check_circle' : 'cancel' }}</mat-icon>
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        class="property-row"
+        (click)="openEditPopup(row)"
+      ></tr>
+    </table>
+
+    @if (properties().length === 0) {
+      <div class="empty-state">{{ 'PROP.NO_PROPS_AVAILABLE' | translate }}</div>
+    }
+  </div>
+</section>
+
+@if (isEditPopupOpen()) {
+  <div class="popup-backdrop" role="presentation" (click)="closeEditPopup()">
+    <section
+      class="edit-popup"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="property-edit-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="popup-header">
+        <div>
+          <p class="eyebrow">{{  'PROP.EDIT_TITLE' | translate }}</p>
+          <h3 id="property-edit-title">{{ editForm.controls.label.value || ('PROP.PROPERTY_DETAILS' | translate ) }}</h3>
+        </div>
+        <button mat-icon-button type="button" aria-label="Close popup" (click)="closeEditPopup()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <form [formGroup]="editForm" class="edit-form" (ngSubmit)="saveProperty()">
+        <div class="property-meta-grid">
+          <article class="meta-card">
+            <span class="meta-label">{{ 'PROP.ID' | translate }}</span>
+            <strong class="meta-value">{{ editForm.controls.id.value }}</strong>
+          </article>
+
+          <article class="meta-card">
+            <span class="meta-label">{{ 'PROP.TYPE' | translate }}</span>
+            <strong class="meta-value">{{ editForm.controls.type.value }}</strong>
+          </article>
+
+          <article class="meta-card meta-card-wide">
+            <span class="meta-label">{{ 'PROP.NAME' | translate}}</span>
+            <strong class="meta-value">{{ editForm.controls.name.value }}</strong>
+          </article>
+
+        </div>
+
+        <div class="form-grid">
+
+          @if (isBooleanType(editForm.controls.type.value)) {
+            <div class="full-width boolean-value-field">
+              <span class="field-label">{{ 'PROP.VALUE' | translate }}</span>
+              <mat-slide-toggle
+                [checked]="editForm.controls.value.value === 'true'"
+                (change)="editForm.controls.value.setValue($event.checked ? 'true' : 'false')"
+              >
+                {{ editForm.controls.value.value === 'true' ? 'True' : 'False' }}
+              </mat-slide-toggle>
+            </div>
+          } @else {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Value</mat-label>
+              <textarea matInput formControlName="value" rows="4"></textarea>
+              @if (editForm.controls.value.invalid && editForm.controls.value.touched) {
+                <mat-error>{{ 'PROP.ERROR.VALUE_REQUIRED' | translate }}</mat-error>
+              }
+            </mat-form-field>
+          }
+        </div>
+
+        <mat-slide-toggle formControlName="enabled">{{ 'PROP.ENABLED' | translate }}</mat-slide-toggle>
+
+        <div class="popup-actions">
+          <button mat-stroked-button type="button" (click)="closeEditPopup()">{{ 'PROP.CANCEL' | translate }}</button>
+          <button mat-flat-button type="submit" [disabled]="isSaving() || editForm.invalid">
+            {{ isSaving() ? ('PROP.SAVING' | translate ) : ( 'PROP.SAVE' | translate ) }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+}
