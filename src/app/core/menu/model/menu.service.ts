@@ -1,6 +1,5 @@
-import {DashboardMenuItem} from "../../../model/dashboard-menu-item";
-import {inject, Injectable} from "@angular/core";
-import {TranslateService} from '@ngx-translate/core';
+import { DashboardMenuItem } from '../../../model/dashboard-menu-item';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +15,7 @@ export class MenuService {
     {
       label: 'MENU.STATS',
       route: 'stats',
-      icon: 'dashboard',
+      icon: 'analytics',
       roles: ['ROLE_USER', 'ROLE_ADMIN'],
     },
     {
